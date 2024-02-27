@@ -8,18 +8,21 @@ BUILD_DIR=$1
 PACKAGE="https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10021/ghostscript-10.02.1.tar.gz"
 
 cd $BUILD_DIR
-wget -O gs.tgz $PACKAGE
-mkdir gs
-tar xvf gs.tgz --directory=gs --strip-components 1
-cd gs
-./configure --disable-cups --disable-gtk --with-drivers=FILES
-make
+# wget -q -O gs.tgz $PACKAGE
+# mkdir gs
+# tar xvf gs.tgz --directory=gs --strip-components 1
+# cd gs
+# ./configure --disable-cups --disable-gtk --with-drivers=FILES
+# make
+wget -q -O gs https://wize-dev.s3.us-west-2.amazonaws.com/heroku-buildpacks/gs-executable
+chmod +x gs
 
 LOCATION="$BUILD_DIR/vendor/gs"
 mkdir -p $LOCATION/bin
-mv bin/gs $LOCATION/bin/gs
-cd $BUILD_DIR
-rm -rf gs gs.tgz
+mv gs $LOCATION/bin/gs
+# mv bin/gs $LOCATION/bin/gs
+# cd $BUILD_DIR
+# rm -rf gs gs.tgz
 
 echo "-----> Building runtime environment for Ghostscript to $LOCATION"
 
