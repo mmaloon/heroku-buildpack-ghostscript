@@ -1,18 +1,25 @@
 #!/usr/bin/env bash
 # bin/compile <build-dir>
 
-echo "-----> Installing Ghostscript 9.22 using build directory $1"
+echo "-----> Installing Ghostscript 10.02.1 using build directory $1"
 
 BUILD_DIR=$1
-PACKAGE="https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs922/ghostscript-9.22-linux-x86_64.tgz"
-BINARY="ghostscript-9.22-linux-x86_64/gs-922-linux-x86_64"
-LOCATION="$BUILD_DIR/vendor/gs"
+#PACKAGE="https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10021/gs_10.02.1_amd64_snap.tgz"
+PACKAGE="https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10021/ghostscript-10.02.1.tar.gz"
 
 cd $BUILD_DIR
-mkdir -p $LOCATION/bin
 wget -O gs.tgz $PACKAGE
-tar xvf gs.tgz
-mv $BINARY $LOCATION/bin/gs
+mkdir gs
+tar xvf gs.tgz --directory=gs --strip-components 1
+cd gs
+./configure --disable-cups --disable-gtk --with-drivers=FILES
+make
+
+LOCATION="$BUILD_DIR/vendor/gs"
+mkdir -p $LOCATION/bin
+mv bin/gs $LOCATION/bin/gs
+cd $BUILD_DIR
+rm -rf gs gs.tgz
 
 echo "-----> Building runtime environment for Ghostscript to $LOCATION"
 
