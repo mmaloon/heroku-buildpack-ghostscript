@@ -42,5 +42,4 @@ aws s3 rm s3://wize-dev/test-file.jpg
 
 https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10021/ghostscript-10.02.1.tar.gz
 
-https://github.com/Manifestly/heroku-buildpack-ghostscript.git
 https://github.com/mmaloon/heroku-buildpack-ghostscript.git
