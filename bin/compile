@@ -1,7 +1,34 @@
 #!/usr/bin/env bash
 # bin/compile <build-dir>
+# https://devcenter.heroku.com/articles/buildpack-api
 
 echo "-----> Installing Ghostscript 10.0.0 using build directory $1"
+
+#################################################################
+#      THIS SECTION DOWNLOADS PRE-BUILT LINUX DISTRIBUTION      #
+#################################################################
+
+BUILD_DIR=$1
+BIN_DIR="vendor/gs/bin"
+LOCATION=$BUILD_DIR/$BIN_DIR
+
+GS_URL="https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs1000/ghostscript-10.0.0-linux-x86_64.tgz"
+curl -L $GS_URL -o /tmp/ghostscript.tgz
+mkdir -p $BUILD_DIR/ghostscript
+tar xzf /tmp/ghostscript.tgz -C $BUILD_DIR/ghostscript --strip-components=1
+
+mkdir -p $LOCATION
+mv $BUILD_DIR/ghostscript/gs-1000-linux-x86_64 $LOCATION/gs
+rm -rf $BUILD_DIR/ghostscript
+
+echo "-----> Adding Ghostscript to PATH"
+mkdir -p $BUILD_DIR/.profile.d
+echo "export PATH=\"\$PATH:$HOME/$BIN_DIR\"" > $BUILD_DIR/.profile.d/ghostscript.sh
+
+echo "-----> Ghostscript installation done"
+
+
+
 
 ##############################################################
 #   THIS SECTION IS FOR DOWNLOADING CUSTOM BUILT EXECUTABLE  #
@@ -58,34 +85,3 @@ echo "-----> Installing Ghostscript 10.0.0 using build directory $1"
 # cd $BUILD_DIR
 # rm -rf gs gs.tgz
 
-
-
-#################################################################
-#      THIS SECTION DOWNLOADS PRE-BUILD LINUX DISTRIBUTION      #
-#################################################################
-
-BUILD_DIR=$1
-BIN_DIR="vendor/gs/bin"
-LOCATION=$BUILD_DIR/$BIN_DIR
-echo "-----> Installing Ghostscript"
-
-GS_URL="https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs1000/ghostscript-10.0.0-linux-x86_64.tgz"
-curl -L ${GS_URL} -o /tmp/ghostscript.tgz
-mkdir -p ${BUILD_DIR}/ghostscript
-tar xzf /tmp/ghostscript.tgz -C ${BUILD_DIR}/ghostscript --strip-components=1
-
-mkdir -p $LOCATION
-mv $BUILD_DIR/ghostscript/gs-1000-linux-x86_64 $LOCATION/gs
-rm -rf $BUILD_DIR/ghostscript
-
-echo "HOME: $HOME"
-echo "BUILD_DIR: $BUILD_DIR"
-ls $BUILD_DIR
-echo "PWD: $(pwd)}"
-ls .
-
-echo "-----> Adding Ghostscript to PATH"
-mkdir -p $BUILD_DIR/.profile.d
-echo "export PATH=\"\$PATH:$HOME/$BIN_DIR\"" > $BUILD_DIR/.profile.d/ghostscript.sh
-
-echo "-----> Ghostscript installation done"
